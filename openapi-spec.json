@@ -1,0 +1,1650 @@
+{
+  "openapi": "3.0.2",
+  "info": { "title": "FastAPI", "version": "0.1.0" },
+  "paths": {
+    "/web/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register",
+        "description": "Register a new user.",
+        "operationId": "register_web_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProfileCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RegisterResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "description": "Perform a login attempt; if successful, refresh token cookie is set\nand access token is returned to the client.",
+        "operationId": "login_web_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginIn" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh",
+        "description": "If refresh token hasn't expired, perform jwt token refresh, returning\na new access token as well as setting a new refresh token cookie.",
+        "operationId": "refresh_web_refresh_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": { "title": "Refresh Token", "type": "string" },
+            "name": "refresh_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/posts": {
+      "get": {
+        "tags": ["Posts"],
+        "summary": "Get Posts",
+        "description": "Return public posts on a profile's wall; if logged user is friend\nwith wall owner, posts for friends only are included as well.",
+        "operationId": "get_posts_web_posts_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Wall Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "wall_profile_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Older Than",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "older_than",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 20.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 10
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Posts Web Posts Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PostRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Posts"],
+        "summary": "Create Post",
+        "description": "Create a new post on a profile's wall.",
+        "operationId": "create_post_web_posts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PostCreateRead" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/posts/{post_id}": {
+      "get": {
+        "tags": ["Posts"],
+        "summary": "Get Post By Id",
+        "description": "Get a post by its id.",
+        "operationId": "get_post_by_id_web_posts__post_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "post_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PostRead" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Posts"],
+        "summary": "Delete Post",
+        "description": "Delete a post. To perform the removal, logged user must be the author\nof the post or the post must be on his wall.",
+        "operationId": "delete_post_web_posts__post_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "post_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/posts/{post_id}/comments": {
+      "get": {
+        "tags": ["Comments"],
+        "summary": "Get Comments",
+        "description": "Get comments under a post.",
+        "operationId": "get_comments_web_posts__post_id__comments_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "post_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Older Than",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "older_than",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 20.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 10
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Comments Web Posts  Post Id  Comments Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CommentRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Comments"],
+        "summary": "Create Comment",
+        "description": "Create a new comment under a post.",
+        "operationId": "create_comment_web_posts__post_id__comments_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "post_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CommentCreate" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CommentCreateRead" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get Profiles By Username Search",
+        "description": "Return a list of profiles whose usernames match the query.",
+        "operationId": "get_profiles_by_username_search_web_profiles_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Username Query", "type": "string" },
+            "name": "username_query",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Profiles By Username Search Web Profiles Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProfileRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get Profile By Id",
+        "description": "Get profile's data by profile id.",
+        "operationId": "get_profile_by_id_web_profiles__profile_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProfileRead" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/outgoing_friend_requests/{target_profile_id}": {
+      "post": {
+        "tags": ["Profiles"],
+        "summary": "Create Friend Request",
+        "description": "Send a friend request from one profile to another.",
+        "operationId": "create_friend_request_web_profiles__profile_id__outgoing_friend_requests__target_profile_id__post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "target_profile_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Profiles"],
+        "summary": "Cancel Outgoing Friend Request",
+        "description": "Cancel an outgoing friend request.",
+        "operationId": "cancel_outgoing_friend_request_web_profiles__profile_id__outgoing_friend_requests__target_profile_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "target_profile_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/friends/{requester_profile_id}": {
+      "post": {
+        "tags": ["Profiles"],
+        "summary": "Accept Friend Request",
+        "description": "Accept an incoming friend request.",
+        "operationId": "accept_friend_request_web_profiles__profile_id__friends__requester_profile_id__post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Requester Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "requester_profile_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/incoming_friend_requests/{requester_profile_id}": {
+      "delete": {
+        "tags": ["Profiles"],
+        "summary": "Reject Incoming Friend Request",
+        "description": "Reject an incoming friend request.",
+        "operationId": "reject_incoming_friend_request_web_profiles__profile_id__incoming_friend_requests__requester_profile_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Requester Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "requester_profile_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/friends/{friend_profile_id}": {
+      "delete": {
+        "tags": ["Profiles"],
+        "summary": "Remove Friend",
+        "description": "Remove a friend from logged user friends list.",
+        "operationId": "remove_friend_web_profiles__profile_id__friends__friend_profile_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Friend Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "friend_profile_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/friend_suggestions": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get Friend Suggestions",
+        "description": "Get friend suggestions (logged user's friends of friends).",
+        "operationId": "get_friend_suggestions_web_profiles__profile_id__friend_suggestions_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": { "title": "Username Gt", "type": "string" },
+            "name": "username_gt",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 50.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 20
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Friend Suggestions Web Profiles  Profile Id  Friend Suggestions Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProfileRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/friends/{friend_profile_id}/mutual_friends": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get Mutual Friends",
+        "description": "Get mutual friends between two profiles.",
+        "operationId": "get_mutual_friends_web_profiles__profile_id__friends__friend_profile_id__mutual_friends_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Friend Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "friend_profile_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": { "title": "Username Gt", "type": "string" },
+            "name": "username_gt",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 50.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 20
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Mutual Friends Web Profiles  Profile Id  Friends  Friend Profile Id  Mutual Friends Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProfileRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/friends": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get Friends",
+        "description": "Get specified profile's friends.",
+        "operationId": "get_friends_web_profiles__profile_id__friends_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": { "title": "Username Gt", "type": "string" },
+            "name": "username_gt",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 50.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 20
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Friends Web Profiles  Profile Id  Friends Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProfileRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/friend_requests": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get Friend Requests",
+        "description": "Get incoming or outgoing friend requests.",
+        "operationId": "get_friend_requests_web_profiles__profile_id__friend_requests_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Direction",
+              "enum": ["incoming", "outgoing"],
+              "type": "string",
+              "default": "outgoing"
+            },
+            "name": "direction",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": { "title": "Username Gt", "type": "string" },
+            "name": "username_gt",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 50.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 20
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Friend Requests Web Profiles  Profile Id  Friend Requests Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProfileRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/relationships/{other_profile_id}": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "Get Relationship",
+        "description": "Return current relationship between two profiles.",
+        "operationId": "get_relationship_web_profiles__profile_id__relationships__other_profile_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Other Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "other_profile_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Relationship" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get Notifications",
+        "description": "Get notifications for a specific profile.",
+        "operationId": "get_notifications_web_profiles__profile_id__notifications_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Older Than",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "older_than",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 20.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 10
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Notifications Web Profiles  Profile Id  Notifications Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/NotificationRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Notifications"],
+        "summary": "Patch Notifications",
+        "description": "Mark specified notifications as read and/or visited.",
+        "operationId": "patch_notifications_web_profiles__profile_id__notifications_patch",
+        "parameters": [
+          {
+            "required": false,
+            "schema": { "title": "Read", "type": "boolean" },
+            "name": "read",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": { "title": "Visited", "type": "boolean" },
+            "name": "visited",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Notification Ids",
+                "type": "array",
+                "items": { "type": "string", "format": "uuid" }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Patch Notifications Web Profiles  Profile Id  Notifications Patch",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/NotificationRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/chat/{chat_group_id}/messages": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "Get Messages",
+        "description": "Get messages belonging to a specific chat group.",
+        "operationId": "get_messages_web_chat__chat_group_id__messages_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Chat Group Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "chat_group_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Older Than",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "older_than",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 20.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 20
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Messages Web Chat  Chat Group Id  Messages Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChatMessageRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/profiles/{profile_id}/conversations": {
+      "get": {
+        "tags": ["Chat"],
+        "summary": "Get Conversations",
+        "description": "Return list of conversations with at least one message in which a\nspecific profile is involved.",
+        "operationId": "get_conversations_web_profiles__profile_id__conversations_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": "profile_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Older Than",
+              "type": "string",
+              "format": "date-time"
+            },
+            "name": "older_than",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 20.0,
+              "minimum": 1.0,
+              "type": "integer",
+              "default": 10
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Conversations Web Profiles  Profile Id  Conversations Get",
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ConversationRead" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/avatar/{identifier}": {
+      "get": {
+        "tags": ["Avatar"],
+        "summary": "Get Random Avatar",
+        "description": "Get a random generated avatar, using identifier as seed.",
+        "operationId": "get_random_avatar_web_avatar__identifier__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": { "title": "Identifier", "type": "string" },
+            "name": "identifier",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChatMessageRead": {
+        "title": "ChatMessageRead",
+        "required": [
+          "id",
+          "createdAt",
+          "fromProfileId",
+          "chatGroupId",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string", "format": "uuid" },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "fromProfileId": {
+            "title": "Fromprofileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "chatGroupId": {
+            "title": "Chatgroupid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": { "title": "Content", "type": "string" }
+        }
+      },
+      "CommentCreate": {
+        "title": "CommentCreate",
+        "required": ["content"],
+        "type": "object",
+        "properties": {
+          "content": {
+            "title": "Content",
+            "maxLength": 1024,
+            "minLength": 1,
+            "pattern": "^$|.*\\S+.*",
+            "type": "string"
+          }
+        }
+      },
+      "CommentCreateRead": {
+        "title": "CommentCreateRead",
+        "required": [
+          "id",
+          "content",
+          "createdAt",
+          "postId",
+          "profileId",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string", "format": "uuid" },
+          "content": { "title": "Content", "type": "string" },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "postId": { "title": "Postid", "type": "string", "format": "uuid" },
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": { "title": "Username", "type": "string" }
+        }
+      },
+      "CommentRead": {
+        "title": "CommentRead",
+        "required": [
+          "id",
+          "content",
+          "createdAt",
+          "postId",
+          "profileId",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string", "format": "uuid" },
+          "content": { "title": "Content", "type": "string" },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "postId": { "title": "Postid", "type": "string", "format": "uuid" },
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": { "title": "Username", "type": "string" }
+        }
+      },
+      "ConversationRead": {
+        "title": "ConversationRead",
+        "required": [
+          "fromProfileId",
+          "fromProfileUsername",
+          "content",
+          "createdAt",
+          "chatGroupId",
+          "chatGroupName"
+        ],
+        "type": "object",
+        "properties": {
+          "fromProfileId": {
+            "title": "Fromprofileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromProfileUsername": {
+            "title": "Fromprofileusername",
+            "type": "string"
+          },
+          "content": { "title": "Content", "type": "string" },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "chatGroupId": {
+            "title": "Chatgroupid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "chatGroupName": { "title": "Chatgroupname", "type": "string" },
+          "readAt": {
+            "title": "Readat",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ValidationError" }
+          }
+        }
+      },
+      "LoginIn": {
+        "title": "LoginIn",
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": { "title": "Email", "type": "string", "format": "email" },
+          "password": {
+            "title": "Password",
+            "maxLength": 64,
+            "minLength": 8,
+            "type": "string"
+          }
+        }
+      },
+      "LoginResponse": {
+        "title": "LoginResponse",
+        "required": ["accessToken", "accessExp", "refreshExp"],
+        "type": "object",
+        "properties": {
+          "accessToken": { "title": "Accesstoken", "type": "string" },
+          "accessExp": { "title": "Accessexp", "type": "integer" },
+          "refreshExp": { "title": "Refreshexp", "type": "integer" }
+        }
+      },
+      "NotificationRead": {
+        "title": "NotificationRead",
+        "required": ["id", "profileId", "data", "read", "visited"],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string", "format": "uuid" },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "data": { "$ref": "#/components/schemas/NotificationReadData" },
+          "read": { "title": "Read", "type": "boolean" },
+          "visited": { "title": "Visited", "type": "boolean" }
+        }
+      },
+      "NotificationReadData": {
+        "title": "NotificationReadData",
+        "required": ["event"],
+        "type": "object",
+        "properties": {
+          "event": { "title": "Event", "type": "string" },
+          "payload": { "title": "Payload" }
+        }
+      },
+      "PostCreate": {
+        "title": "PostCreate",
+        "required": ["content"],
+        "type": "object",
+        "properties": {
+          "content": {
+            "title": "Content",
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "wallProfileId": {
+            "title": "Wallprofileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "privacy": {
+            "allOf": [{ "$ref": "#/components/schemas/PostPrivacy" }],
+            "default": "PUBLIC"
+          }
+        }
+      },
+      "PostCreateRead": {
+        "title": "PostCreateRead",
+        "required": [
+          "id",
+          "content",
+          "createdAt",
+          "wallProfileId",
+          "profileId",
+          "privacy"
+        ],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string", "format": "uuid" },
+          "content": { "title": "Content", "type": "string" },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "title": "Updatedat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "wallProfileId": {
+            "title": "Wallprofileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "privacy": { "$ref": "#/components/schemas/PostPrivacy" },
+          "commentsCount": {
+            "title": "Commentscount",
+            "type": "integer",
+            "default": 0
+          }
+        }
+      },
+      "PostPrivacy": {
+        "title": "PostPrivacy",
+        "enum": ["PUBLIC", "FRIENDS"],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "PostRead": {
+        "title": "PostRead",
+        "required": [
+          "id",
+          "content",
+          "createdAt",
+          "wallProfileId",
+          "profileId",
+          "privacy",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string", "format": "uuid" },
+          "content": { "title": "Content", "type": "string" },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "title": "Updatedat",
+            "type": "string",
+            "format": "date-time"
+          },
+          "wallProfileId": {
+            "title": "Wallprofileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "profileId": {
+            "title": "Profileid",
+            "type": "string",
+            "format": "uuid"
+          },
+          "privacy": { "$ref": "#/components/schemas/PostPrivacy" },
+          "commentsCount": {
+            "title": "Commentscount",
+            "type": "integer",
+            "default": 0
+          },
+          "username": { "title": "Username", "type": "string" }
+        }
+      },
+      "ProfileCreate": {
+        "title": "ProfileCreate",
+        "required": ["username", "email", "password"],
+        "type": "object",
+        "properties": {
+          "username": {
+            "title": "Username",
+            "maxLength": 32,
+            "minLength": 2,
+            "pattern": "^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*$",
+            "type": "string"
+          },
+          "email": { "title": "Email", "type": "string", "format": "email" },
+          "password": {
+            "title": "Password",
+            "maxLength": 64,
+            "minLength": 8,
+            "type": "string"
+          },
+          "avatarIdentifier": {
+            "title": "Avataridentifier",
+            "type": "string",
+            "default": "6dd2add2-3b1f-432f-88e9-2955bcb1625f"
+          }
+        }
+      },
+      "ProfileRead": {
+        "title": "ProfileRead",
+        "required": ["id", "username"],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string", "format": "uuid" },
+          "username": { "title": "Username", "type": "string" }
+        }
+      },
+      "RegisterResponse": {
+        "title": "RegisterResponse",
+        "required": ["id", "username", "email", "role"],
+        "type": "object",
+        "properties": {
+          "id": { "title": "Id", "type": "string", "format": "uuid" },
+          "username": { "title": "Username", "type": "string" },
+          "email": { "title": "Email", "type": "string", "format": "email" },
+          "role": { "$ref": "#/components/schemas/Role" }
+        }
+      },
+      "Relationship": {
+        "title": "Relationship",
+        "enum": [
+          "FRIEND",
+          "OUTGOING_FRIEND_REQUEST",
+          "INCOMING_FRIEND_REQUEST",
+          "SELF",
+          "NONE"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "Role": {
+        "title": "Role",
+        "enum": ["USER", "ADMIN"],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": ["loc", "msg", "type"],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "msg": { "title": "Message", "type": "string" },
+          "type": { "title": "Error Type", "type": "string" }
+        }
+      }
+    }
+  }
+}
